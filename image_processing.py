@@ -21,7 +21,11 @@ def resize_image(path, ext, ratio, overwrite=False):
 
 		# Access image
 		file_path = path + f
-		image = Image.open(file_path)
+		orig = Image.open(file_path).convert('RGBA')
+
+		# Paste original image onto white background
+		image = Image.new("RGB", orig.size, "#ffffff")
+		image.paste(orig, None, orig)
 
 		# Initialize width and height
 		width = image.size[0]
@@ -49,9 +53,11 @@ def resize_image(path, ext, ratio, overwrite=False):
 		else:
 			# Append ratio (ie. x0.25) to new file name
 			if type(ratio) is tuple:
-				image.save(re.sub(r'\.(?!.*\.)', '_' + str(new_width) + "x" + str(new_height) + '.', file_path))
+				image.save(re.sub(r'\.(?!.*\.)', '_' + str(new_width) + "x" + str(new_height) + '.', file_path), optimize=True, quality=95)
 			else:
-				image.save(re.sub(r'\.(?!.*\.)', '_x' + str(ratio) + '.', file_path))
+				image.save(re.sub(r'\.(?!.*\.)', '_x' + str(ratio) + '.', file_path), optimize=True, quality=95)
 
 
-resize_image(path='test/', ext='png', ratio=(128, 0))
+# resize_image(path='test/', ext='png', ratio=(128, 0))
+
+resize_image(path='../99dropstep/assets/images/thumbs/', ext='png', ratio=(128, 0), overwrite=True)
