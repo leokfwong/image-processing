@@ -25,7 +25,7 @@ def resize_image(path, ext, ratio, overwrite=False):
 		if overwrite:
 			image.save(file_path)
 		else:
-			image.save(re.sub(r'\.(?!.*\.)', r'_2.', file_path))
+			image.save(re.sub(r'\.(?!.*\.)', '_x' + str(ratio) + '.', file_path))
 
 
-resize_image(path='test/', ext='png', ratio=0.25, overwrite=False)
+resize_image(path='test/', ext='png', ratio=1.25, overwrite=False)
