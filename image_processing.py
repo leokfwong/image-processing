@@ -2,21 +2,30 @@ from PIL import Image
 import os
 import re
 
+def fetch_files(path, ext):
+	all_files = os.listdir(path)
+	regex = re.compile('.*\.' + ext + '$')
+	files = list(filter(regex.match, all_files))
+	return(files)
 
-all_files = os.listdir("../images/paintings/2008")
-regex = re.compile(".*\.png$")
-print(list(filter(regex.match, all_files)))
 
-def resize_image():
+def resize_image(path, ext, ratio, overwrite=False):
 
-	folder_path = "../images/paintings/2008/"
-	image = Image.open('../images/paintings/2008/')
+	files = fetch_files(path, ext)
 
-	ratio = 0.1
+	for file in files:
+		file_path = path + file
+		image = Image.open(file_path)
 
-	new_width = round(image.size[0] * ratio)
-	new_height = round(image.size[1] * ratio)
+		new_width = round(image.size[0] * ratio)
+		new_height = round(image.size[1] * ratio)
 
-	image.thumbnail((new_width, new_height), Image.ANTIALIAS)
+		image.thumbnail((new_width, new_height), Image.ANTIALIAS)
 
-	image.save('../images/paintings/2008/resized-img-001.png')
+		if overwrite:
+			image.save(file_path)
+		else:
+			image.save(re.sub(r'\.(?!.*\.)', r'_2.', file_path))
+
+
+resize_image(path='test/', ext='png', ratio=0.25, overwrite=False)
