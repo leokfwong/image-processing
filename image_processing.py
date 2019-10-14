@@ -23,12 +23,24 @@ def resize_image(path, ext, ratio, overwrite=False):
 		file_path = path + f
 		image = Image.open(file_path)
 
+		# Initialize width and height
+		width = image.size[0]
+		height = image.size[1]
+
 		# Derive new width and height based on ratio 
-		new_width = round(image.size[0] * ratio)
-		new_height = round(image.size[1] * ratio)
+		if type(ratio) is tuple:
+			if ratio[0] == 0:
+				new_height = ratio[1]
+				new_width = round(new_height * width / height)
+			else:
+				new_width = ratio[0]
+				new_height = round(new_width * height / width)
+		else:
+			new_width = round(width * ratio)
+			new_height = round(height * ratio)
 
 		# Resize image
-		image.thumbnail((new_width, new_height), Image.ANTIALIAS)
+		image = image.resize((new_width, new_height), Image.ANTIALIAS)
 
 		# Save image
 		if overwrite:
@@ -36,7 +48,10 @@ def resize_image(path, ext, ratio, overwrite=False):
 			image.save(file_path)
 		else:
 			# Append ratio (ie. x0.25) to new file name
-			image.save(re.sub(r'\.(?!.*\.)', '_x' + str(ratio) + '.', file_path))
+			if type(ratio) is tuple:
+				image.save(re.sub(r'\.(?!.*\.)', '_' + str(new_width) + "x" + str(new_height) + '.', file_path))
+			else:
+				image.save(re.sub(r'\.(?!.*\.)', '_x' + str(ratio) + '.', file_path))
 
 
-resize_image(path='test/', ext='png', ratio=1.25, overwrite=False)
+resize_image(path='test/', ext='png', ratio=(128, 0))
